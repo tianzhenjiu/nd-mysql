@@ -12,7 +12,7 @@ import lombok.ToString;
 public class OKPacket extends MysqlPacket{
 
 	
-	byte  header;
+	short  header;
 	
 	long affectedRows;
 	

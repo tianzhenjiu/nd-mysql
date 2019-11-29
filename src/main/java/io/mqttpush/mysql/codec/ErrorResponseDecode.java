@@ -55,8 +55,6 @@ public class ErrorResponseDecode extends ChannelInboundHandlerAdapter{
 
         System.out.println(errorPacket);
 
-        System.exit(0);
-
     }
 
 

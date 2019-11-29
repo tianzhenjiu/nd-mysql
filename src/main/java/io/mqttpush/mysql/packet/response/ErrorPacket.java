@@ -21,7 +21,7 @@ public class ErrorPacket extends MysqlPacket{
      *
      *
      */
-	byte header;
+	short header;
 
 	int errorCode;
 

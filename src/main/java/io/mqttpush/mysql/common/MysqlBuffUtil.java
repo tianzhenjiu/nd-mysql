@@ -13,6 +13,35 @@ import io.netty.buffer.ByteBuf;
  */
 public class MysqlBuffUtil {
 
+
+
+	public static long  readLenencInt(ByteBuf in) {
+
+		int affectedRows1 = in.readUnsignedByte();
+
+		if (affectedRows1 <=0xfb) {
+			return affectedRows1;
+		}
+
+		switch (affectedRows1) {
+			case 0xfc:
+				return MysqlBuffUtil.readInt(in);
+
+			case 0xfd:
+				return MysqlBuffUtil.readLongInt(in);
+
+			case 0xfe:
+				return MysqlBuffUtil.readLong(in);
+
+			case 0xff:
+				return MysqlBuffUtil.readLongLong(in);
+
+				default:
+					return affectedRows1;
+		}
+
+	}
+
 	public static final void writeWithLength(ByteBuf buffer, byte[] src) {
 		int length = src.length;
 		if (length < 251) {

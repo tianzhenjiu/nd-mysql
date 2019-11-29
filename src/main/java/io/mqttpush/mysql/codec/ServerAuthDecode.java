@@ -33,12 +33,19 @@ public class ServerAuthDecode extends ChannelInboundHandlerAdapter{
 	public static final int SEED_LENGTH = 20;
 	
 	
-	String  username="root";
+	String  username="readt";
 	
-	String  password="abc123qwe";
+	String  password="Readt123!";
 
-	String dbname="redt";
-	
+	public ServerAuthDecode(String username, String password, String dbname) {
+		this.username = username;
+		this.password = password;
+		this.dbname = dbname;
+	}
+
+	String dbname="readt";
+
+
 	
 
 	@Override
@@ -326,7 +333,9 @@ public class ServerAuthDecode extends ChannelInboundHandlerAdapter{
 		writeBuff.writeByte((byte) authPacket.getPacketNumber()+1);
 
 		writeBuff.writeBytes(byteBuf);
-		
+
+
+
 		return channel.writeAndFlush(writeBuff);
 	}
 	

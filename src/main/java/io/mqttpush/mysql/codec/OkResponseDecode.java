@@ -52,27 +52,7 @@ public class OkResponseDecode extends ChannelInboundHandlerAdapter {
 		
 		OKPacket okPacket=decodeOkPacket(in, authPacket);
 
-
-
 		System.out.println(okPacket);
-
-		ByteBuf writeBuff = channel.alloc().buffer();
-
-
-		ByteBuf byteBuf=channel.alloc().buffer();
-
-		byteBuf.writeByte(3);
-		byteBuf.writeBytes("SHOW STATUS".getBytes());
-
-		MysqlBuffUtil.writeLongInt(writeBuff, byteBuf.readableBytes());
-
-		writeBuff.writeByte((byte)0);
-
-		writeBuff.writeBytes(byteBuf);
-
-
-		ctx.writeAndFlush(writeBuff);
-
 
 
 	}
@@ -83,10 +63,10 @@ public class OkResponseDecode extends ChannelInboundHandlerAdapter {
 		okPacket.setHeader((byte) 0x00);
 
 		
-		okPacket.setAffectedRows(readLenencInt(in));
+		okPacket.setAffectedRows(MysqlBuffUtil.readLenencInt(in));
 		
 
-		okPacket.setLastInsertid(readLenencInt(in));
+		okPacket.setLastInsertid(MysqlBuffUtil.readLenencInt(in));
 		
 		
 		int serverCapbility=authPacket.getServerCapbility();
@@ -105,7 +85,7 @@ public class OkResponseDecode extends ChannelInboundHandlerAdapter {
 		if(in.readableBytes()>0){
 			if((serverCapbility&Capbilities.CLIENT_SESSION_TRACK)!=0) {
 
-				int strlen=(int)readLenencInt(in);
+				int strlen=(int)MysqlBuffUtil.readLenencInt(in);
 				okPacket.setHumanReadableInfo(MysqlBuffUtil.readString(in, "utf-8", strlen));
 
 
@@ -113,7 +93,7 @@ public class OkResponseDecode extends ChannelInboundHandlerAdapter {
 
 				if((statusFlag&Capbilities.SERVER_SESSION_STATE_CHANGED)!=0) {
 
-					strlen=(int)readLenencInt(in);
+					strlen=(int)MysqlBuffUtil.readLenencInt(in);
 
 					okPacket.setSessionStateChanges(MysqlBuffUtil.readString(in, "utf-8", strlen));
 				}
@@ -130,32 +110,6 @@ public class OkResponseDecode extends ChannelInboundHandlerAdapter {
 		
 		return okPacket;
 	}
-	
-	long  readLenencInt(ByteBuf in) {
-		
-		int affectedRows1 = in.readByte();
-
-		if (affectedRows1 < 0xfb) {
-			return affectedRows1;
-		}
-
-		switch (affectedRows1) {
-		case 0xfc:
-			return MysqlBuffUtil.readInt(in);
-			
-		case 0xfd:
-			return MysqlBuffUtil.readLongInt(in);
-			
-		case 0xfe:
-			return MysqlBuffUtil.readLong(in);
-			
-		case 0xff:
-			return MysqlBuffUtil.readLongLong(in);
-		}
-		
-		return 0x00L;
-	}
-	
 
 
 }
