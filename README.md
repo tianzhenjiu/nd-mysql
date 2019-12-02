@@ -1,5 +1,6 @@
 ### 基于Netty实现Mysql协议，支持基本增删改查
 
+### 命令行启动 参数java io.mqttpush.mysql.client.MysqlClient host port username password dbname
 
 ### 实现select
 
